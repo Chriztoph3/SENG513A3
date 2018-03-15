@@ -35,11 +35,18 @@
           $('#messages').append($('<li>').text(msg));		  
           window.scrollTo(0, document.body.scrollHeight);
         });
-		socket.on('peopleListUpdate', function(msg)
+		socket.on('peopleListUpdate', function(people)
 		{			
-			$('#people').append($('<li>').text(msg));		  
+			$('#people').append($('<li>').text(people));		  
 			window.scrollTo(0, document.body.scrollHeight);
-        });		
+        });
+		socket.on('history', function(history)
+		{			
+			for(var i = 0 ; i < history.length-1; i++)
+			{
+				$('#messages').append($('<li>').text(history[i]));
+			}
+        });
       });
     </script>
 	

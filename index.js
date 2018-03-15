@@ -3,6 +3,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
 var people = [];
+var history = [];
 function getTimeStamp()
 {
 	var date = new Date();
@@ -33,15 +34,22 @@ app.get('/', function(req, res){
 
 io.on('connection', function(socket){
   console.log( getOccupation(socket.id) + ' connected' + getTimeStamp());
-  io.emit('chat message', "*you see a " + getOccupation(socket.id) + " enter the room*" );
+  io.emit('chat message', "*" + getOccupation(socket.id) + " enters the room*" );
   people.push(getOccupation(socket.id));
   io.emit('peopleListUpdate', people);
+  io.emit('history', history);
     
 });
 
 io.on('connection', function(socket){
   socket.on('chat message', function(msg){
     io.emit('chat message', "The " + getOccupation(socket.id) + getTimeStamp() + 'says: "' + msg + '"');
+	history.push("The " + getOccupation(socket.id) + getTimeStamp() + 'says: "' + msg + '"');
+	if(msg.slice(0,5) === "/nick")
+	{
+		var nickName = msg;
+		io.emit('chat message', "nickname changed to " + nickName);
+	}
   });
 });
 
